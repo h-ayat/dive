@@ -1,0 +1,6 @@
+package dive
+
+
+object LL {
+
+}

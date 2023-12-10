@@ -1,0 +1,32 @@
+# ------- Editors
+# emacs
+.ensime
+.ensime_cache
+*#
+
+# vim
+*~
+.swp
+
+# vscode
+.vscode/
+
+# idea
+*.iws
+*.iml
+.idea/
+.idea_modules/
+
+
+# --------- Build (metals,bloop,bsp)
+metals.sbt
+.bloop/
+.metals/
+.bsp/
+project/project/
+project/target/
+
+
+# --------- OTHER
+*.log
+target/
