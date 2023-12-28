@@ -14,17 +14,28 @@ sealed trait LL[T] {
   def drop(c: Int): LL[T]
   def takeWhile(p: T => Boolean): LL[T]
   def dropWhile(p: T => Boolean): LL[T]
+
+  def map[U](f: T => U): LL[U]
 }
 
 case class Node[T](value: T, next: LL[T]) extends LL[T] {
 
-  override def take(c: Int): LL[T] = ???
+  override def map[U](f: T => U): LL[U] = ???
 
-  override def drop(c: Int): LL[T] = ???
+  override def take(c: Int): LL[T] =
+    if (c <= 0) Empty[T]()
+    else Node(value, next.take(c - 1))
 
-  override def takeWhile(p: T => Boolean): LL[T] = ???
+  override def drop(c: Int): LL[T] = if (c <= 0) this
+  else next.drop(c - 1)
 
-  override def dropWhile(p: T => Boolean): LL[T] = ???
+  override def takeWhile(p: T => Boolean): LL[T] =
+    if (p(value)) Node(value, next.takeWhile(p))
+    else Empty()
+
+  override def dropWhile(p: T => Boolean): LL[T] =
+    if (p(value)) next.dropWhile(p)
+    else this
 
   override def filter(p: T => Boolean): LL[T] = {
     val other = next.filter(p)
@@ -49,13 +60,15 @@ case class Node[T](value: T, next: LL[T]) extends LL[T] {
 
 case class Empty[T]() extends LL[T] {
 
-  override def take(c: Int): LL[T] = ???
+  override def map[U](f: T => U): LL[U] = ???
 
-  override def drop(c: Int): LL[T] = ???
+  override def take(c: Int): LL[T] = this
 
-  override def takeWhile(p: T => Boolean): LL[T] = ???
+  override def drop(c: Int): LL[T] = this
 
-  override def dropWhile(p: T => Boolean): LL[T] = ???
+  override def takeWhile(p: T => Boolean): LL[T] = this
+
+  override def dropWhile(p: T => Boolean): LL[T] = this
 
   override def head: T = throw new Exception("")
 
@@ -148,6 +161,5 @@ object Tester {
 
   test.head
   test.tail
-  
 
 }
