@@ -16,11 +16,12 @@ sealed trait LL[T] {
   def dropWhile(p: T => Boolean): LL[T]
 
   def map[U](f: T => U): LL[U]
+
 }
 
 case class Node[T](value: T, next: LL[T]) extends LL[T] {
 
-  override def map[U](f: T => U): LL[U] = ???
+  override def map[U](f: T => U): LL[U] = Node(f(value), next.map(f))
 
   override def take(c: Int): LL[T] =
     if (c <= 0) Empty[T]()
@@ -60,7 +61,7 @@ case class Node[T](value: T, next: LL[T]) extends LL[T] {
 
 case class Empty[T]() extends LL[T] {
 
-  override def map[U](f: T => U): LL[U] = ???
+  override def map[U](f: T => U): LL[U] = Empty[U]()
 
   override def take(c: Int): LL[T] = this
 
@@ -83,6 +84,79 @@ case class Empty[T]() extends LL[T] {
 }
 
 object LL {
+
+  // Int => String
+  // String => Double
+
+  // Int => Double
+  // Currying
+
+  private def productDirect(x: Int, y: Int): Int = x * y
+  val tempWithoutCurry: Int => Int = productDirect(_, 3)
+
+  def testAmin(a: Int, s: String): Int = ???
+  testAmin(_, "salam")
+
+  def triple(a: Int, b: String, c: Boolean): Unit = println(a + b + c)
+
+  val resultTriple = triple(_, _, true)
+  val resultTriple2 = resultTriple(_, "3")
+  val finalResult = resultTriple2(4)
+
+  private def productExternalCurry(x: Int): Int => Int = {
+    // y => x * y
+    def product_2(y: Int): Int = x * y
+    product_2
+  }
+  private def productInternalCurry(x: Int)(y: Int): Int = x * y
+
+  val temp: Int => Int = productInternalCurry(2)
+
+  productDirect(2, 3)
+  productExternalCurry(2)(3)
+
+  val input = Node(1, Node(2, Empty()))
+
+  private def add2(x: Int): Int = x + 2
+
+  //   _ +  _
+  private def add(x: Int, y: Int): Int = x + y
+
+  //                              x => x + 2
+  val result = map(input)(_ + 2)
+  val result2 = map(input)(x => x * x + 2 * x)
+
+  def map[T, U](in: LL[T])(f: T => U): LL[U] = in match {
+    case Node(value, next) =>
+      Node(f(value), map(next)(f))
+    case Empty() => Empty()
+  }
+
+  def concat[T](before: LL[T], after: LL[T]): LL[T] = before match {
+    case Node(value, next) =>
+      Node(value, concat(next, after))
+    case Empty() =>
+      after
+  }
+
+  def flatten[T](in: LL[LL[T]]): LL[T] = in match {
+    case Node(value, next) =>
+      concat(value, flatten(next))
+
+    case Empty() =>
+      Empty()
+  }
+
+  def flatMap1[T, U](in: LL[T], f: T => LL[U]): LL[U] = {
+    flatten(map(in)(f))
+  }
+
+  def flatMap2[T, U](in: LL[T], f: T => LL[U]): LL[U] = in match {
+    case Node(value, next) =>
+      concat(f(value), flatMap2(next, f))
+    case Empty() =>
+      Empty()
+  }
 
   def head[T](in: LL[T]): T = in match {
     case Node(value, next) => value
@@ -150,16 +224,41 @@ object LL {
       0
   }
 
+  def max(in: LL[Int]): Int = ???
+
 }
 
 object Tester {
 
-  val l = 1 :: 2 :: 3 :: Nil
 
-  val myList = Node("b4", Node("aa5", Node("aaaaa6", Empty())))
-  val test: List[String] = "b4" :: "aa5" :: "aaaaa6" :: Nil
+  // ArrayList<Cat> cats = ???
+  // test(cats)
+  // cats.foreach{ cat => cat.meow}
 
-  test.head
-  test.tail
+  // void test(ArrayList<Animal> animals) {
+  //   Dog dog = new Dog();
+  //   animals.add(dog);
+  // }
 
+  // Cat <: Animal
+  // X[Cat] <: X[Animal]
+  // X[Cat] >: X[Animal]
+
+  val nestedList: LL[LL[Int]] =
+    Node(5, Node(3, Node(1, Empty()))).map((x) => Node(x, Empty()))
+  println(LL.flatten(nestedList))
+
+  // val n: LL[Node[Int]] = ???
+  // // test(n)
+
+  // def test(in: LL[LL[Int]]): Int = ???
+
+  // def flatten[T](in: LL[LL[T]]): LL[T] = ???
+  //  in match {
+  //   case Node(value, next) =>
+  //     LL.concat(value, flatten(next))
+
+  //   case Empty() =>
+  //     Empty()
+  // }
 }
