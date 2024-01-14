@@ -95,7 +95,6 @@ object LL {
   val tempWithoutCurry: Int => Int = productDirect(_, 3)
 
   def testAmin(a: Int, s: String): Int = ???
-  testAmin(_, "salam")
 
   def triple(a: Int, b: String, c: Boolean): Unit = println(a + b + c)
 
