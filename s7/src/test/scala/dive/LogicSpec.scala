@@ -8,6 +8,8 @@ class LogicSpec extends AnyFlatSpec with Matchers {
   "Min function" should "find minimum" in {
     import Logic.min
 
+
+
     val gen: Gen[List[Int]] = Gen.list(Gen.positiveInt, 1000)
 
     for {
@@ -20,10 +22,9 @@ class LogicSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "generate random people" in {
-
     val personGenerator = for {
       age <- Gen.lessThanInt(120)
-      name <- Gen.chertString
+      name <- Gen.chertString(120)
     } yield Person(name, age)
 
   }
