@@ -1,0 +1,3 @@
+package dive
+
+object Runner {}
