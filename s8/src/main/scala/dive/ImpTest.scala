@@ -76,4 +76,14 @@ object ImpTest {
     val result = Await.result(o, 2.seconds)
   }
 
+  val f: Future[Int] = ???
+
+}
+
+object RaceSample {
+  var counter = 0
+
+  def inc(): Unit = {
+    counter = counter + 1
+  }
 }
