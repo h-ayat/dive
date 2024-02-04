@@ -43,6 +43,17 @@ object ImpTest {
 
   }
 
+  def test(a: PersonId, b: PetId): Future[(Person, Pet)] = {
+
+    val aa = getPerson(a)
+    val bb = getPet(b)
+
+    for {
+      person <- aa
+      pet <- bb
+    } yield person -> pet
+  }
+
   def getPersonPet(id: PersonId): Future[Pet] =
     for {
       person <- Db.getPerson(id)
